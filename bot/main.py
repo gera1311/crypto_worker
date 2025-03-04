@@ -1,24 +1,22 @@
-import asyncio
 import os
-
+import asyncio
 from aiogram import Bot, Dispatcher
 from dotenv import load_dotenv, find_dotenv
 
-from handlers.user_private import user_private_router
+from handlers.start import start_router
 
 load_dotenv(find_dotenv())
 
-ALLOWED_UPDATES = ['message', 'edited_message']
-
-bot = Bot(token=os.getenv("BOT_TOKEN"))
+bot = Bot(token=os.getenv('BOT_TOKEN'))
 dp = Dispatcher()
+dp.include_router(start_router)
 
-dp.include_router(user_private_router)
+ALLOWED_UPDATES = ['message', 'edited_message']
 
 
 async def main():
     await bot.delete_webhook(drop_pending_updates=True)
     await dp.start_polling(bot, allowed_updates=ALLOWED_UPDATES)
 
-
-asyncio.run(main())
+if __name__ == '__main__':
+    asyncio.run(main())

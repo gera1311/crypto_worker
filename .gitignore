@@ -1,5 +1,8 @@
 .env
+.vscode
 venv
 __pycache__
 *.pyc
 
+bot.log
+structure.txt
