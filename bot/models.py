@@ -79,7 +79,7 @@ class Wallet(Base):
         Integer, primary_key=True, autoincrement=True)
     user_id: Mapped[int] = mapped_column(ForeignKey('user.id'))
     user: Mapped['User'] = relationship(back_populates='wallets')
-    address: Mapped[str] = mapped_column(String(255), unique=True)
+    address: Mapped[str] = mapped_column(String(255))
     withdraw_address: Mapped[str] = mapped_column(String(255), unique=True)
     __table_args__ = (UniqueConstraint('address',
                                        'withdraw_address',
