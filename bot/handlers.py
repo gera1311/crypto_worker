@@ -2,7 +2,7 @@ from aiogram import Router, types, F
 from aiogram.filters import Command, CommandStart, or_f
 from aiogram.types import ReplyKeyboardRemove
 
-from keyboards.menu import menu_keyboard, start_keyboard
+from keyboards import menu_keyboard, start_keyboard
 
 start_router = Router()
 
