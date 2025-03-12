@@ -1,8 +1,13 @@
 from typing import List
-from sqlalchemy import DateTime, ForeignKey, Integer, String, func
+from sqlalchemy import (DateTime,
+                        ForeignKey,
+                        Integer,
+                        String,
+                        func,
+                        UniqueConstraint)
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
-from utils.encryption import encryption
+from bot.utils.encryption import encryption
 
 
 class Base(DeclarativeBase):
@@ -74,7 +79,11 @@ class Wallet(Base):
         Integer, primary_key=True, autoincrement=True)
     user_id: Mapped[int] = mapped_column(ForeignKey('user.id'))
     user: Mapped['User'] = relationship(back_populates='wallets')
-    address: Mapped[str] = mapped_column(String(255))
+    address: Mapped[str] = mapped_column(String(255), unique=True)
+    withdraw_address: Mapped[str] = mapped_column(String(255), unique=True)
+    __table_args__ = (UniqueConstraint('address',
+                                       'withdraw_address',
+                                       name='Адрес кошелька - Адрес вывода'))
 
     _private_key: Mapped[str] = mapped_column('private_key', String(255))
 

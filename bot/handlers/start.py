@@ -1,5 +1,7 @@
 from aiogram import Router, types, F
 from aiogram.filters import Command, CommandStart, or_f
+from aiogram.types import ReplyKeyboardRemove
+
 from keyboards.menu import menu_keyboard, start_keyboard
 
 start_router = Router()
@@ -20,6 +22,9 @@ async def start_command(message: types.Message):
 async def main_menu_callback(message: types.CallbackQuery):
     await message.answer(
         'Выбери действие:', reply_markup=menu_keyboard)
+    await message.answer(
+        reply_markup=ReplyKeyboardRemove()
+    )
 
 
 @start_router.callback_query(F.data == 'about_bot')
