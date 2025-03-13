@@ -3,7 +3,7 @@ import asyncio
 from aiogram import Bot, Dispatcher
 from dotenv import load_dotenv, find_dotenv
 
-from handlers import start_router
+from apps.exchanges.handlers import start_router
 
 load_dotenv(find_dotenv())
 

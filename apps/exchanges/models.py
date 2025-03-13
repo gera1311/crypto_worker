@@ -1,14 +1,17 @@
-from sqlalchemy import (ForeignKey, Integer, String,)
+from typing import TYPE_CHECKING
+
+from sqlalchemy import ForeignKey, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from apps.utils.encryption import encryption
-from bot.models import User, Base
+from core.db import Base
+
+if TYPE_CHECKING:
+    # Импорты только для проверки типов, не выполняются при запуске
+    from apps.users.models import User
 
 
 class CryptoExchange(Base):
-    __tablename__ = 'crypto_exchange'
-    id: Mapped[int] = mapped_column(
-        Integer, primary_key=True, autoincrement=True)
     name: Mapped[str] = mapped_column(String(255))
     user_id: Mapped[int] = mapped_column(ForeignKey('user.id'))
     user: Mapped['User'] = relationship(back_populates='exchanges')

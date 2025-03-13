@@ -1,17 +1,16 @@
-from typing import List
+from typing import List, TYPE_CHECKING
 
-from sqlalchemy import Integer
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.orm import Mapped, relationship
 
-from bot.models import Base
-from exchanges.models import CryptoExchange
-from wallets.models import Wallet
+from core.db import Base
+from apps.exchanges.models import CryptoExchange
+
+if TYPE_CHECKING:
+    # Импорты только для проверки типов, не выполняются при запуске
+    from wallets.models import Wallet
 
 
 class User(Base):
-    __tablename__ = 'user'
-    id: Mapped[int] = mapped_column(
-        Integer, primary_key=True, autoincrement=True)
     wallets: Mapped[List['Wallet']] = relationship(
         back_populates='user',
         cascade='all, delete-orphan'
