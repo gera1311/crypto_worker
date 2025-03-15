@@ -3,13 +3,12 @@ import asyncio
 from aiogram import Bot, Dispatcher
 from dotenv import load_dotenv, find_dotenv
 
-from apps.exchanges.handlers import start_router
 
 load_dotenv(find_dotenv())
 
 bot = Bot(token=os.getenv('BOT_TOKEN'))
 dp = Dispatcher()
-dp.include_router(start_router)
+
 
 # ALLOWED_UPDATES = ['message', 'edited_message', 'callback_query']
 
