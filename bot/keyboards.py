@@ -1,32 +1,40 @@
-from aiogram.types import InlineKeyboardButton, KeyboardButton
-from aiogram.utils.keyboard import ReplyKeyboardBuilder, InlineKeyboardBuilder
+from aiogram.types import InlineKeyboardButton
+from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 
-start_keyboard = ReplyKeyboardBuilder()
-start_keyboard.add(
-    KeyboardButton(text='Главное меню'),
-    KeyboardButton(text='О боте'),
-    KeyboardButton(text='Связь с разработчиком')
-)
-start_keyboard.adjust(2, 1)
-start_keyboard = start_keyboard.as_markup(
-    resize_keyboard=True,
-    placeholder='Выбери действие'
-)
+def get_inline_keyboard(
+        *buttons: tuple[str, str],
+        sizes: tuple[int] = (2,),
+        placeholder: str = None,
+        url_buttons: tuple[tuple[str, str]] = None
+):
+    '''
+    Parameters request_contact and request_location must be as indexes
+    of btns args for buttons you need.
+    Example:
+    get_keyboard(
+            "Меню",
+            "О магазине",
+            "Варианты оплаты",
+            "Варианты доставки",
+            "Отправить номер телефона"
+            placeholder="Что вас интересует?",
+            request_contact=4,
+            sizes=(2, 2, 1)
+        )
+    '''
+    keyboard = InlineKeyboardBuilder()
 
+    for text, callback_data in buttons:
+        keyboard.add(InlineKeyboardButton(text=text,
+                                          callback_data=callback_data))
 
-menu_keyboard = InlineKeyboardBuilder()
-menu_keyboard.add(
-    InlineKeyboardButton(text='Мои биржи',
-                         callback_data='my_exchanges'),
-    InlineKeyboardButton(text='Привязать биржу',
-                         callback_data='attach_exchange'),
-    InlineKeyboardButton(text='Отвязать биржу',
-                         callback_data='detach_exchange'),
-    InlineKeyboardButton(text='Массовый вывод средств',
-                         callback_data='mass_withdrawal'),
-    InlineKeyboardButton(text='Назад',
-                         callback_data='back_to_main_menu')
-)
-menu_keyboard.adjust(2, 2, 1)
-menu_keyboard = menu_keyboard.as_markup()
+    if url_buttons:
+        for text, url in url_buttons:
+            keyboard.add(InlineKeyboardButton(text=text,
+                                              url=url))
+
+    return keyboard.adjust(*sizes).as_markup(
+        resize_keyboard=True,
+        input_field_placeholder=placeholder
+    )
