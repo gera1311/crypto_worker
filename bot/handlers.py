@@ -5,78 +5,76 @@ from keyboards import get_inline_keyboard
 
 start_router = Router()
 
-TEXT_START = ("привет! Я твой персональный помощник.")
+TEXT_START = ("Привет, {name}! Я твой персональный помощник.")
 
+START_KEYBOARD = get_inline_keyboard(
+    ('Главное меню', 'menu'),
+    ('О боте', 'about_bot'),
+    placeholder='Что вы хотели?',
+    sizes=(1, 1)
+)
 
-async def send_start_keyboard(message: types.Message,
-                              delete_original: bool = False):
-    await message.answer(
-        text="Выберите действие из главного меню:",
-        reply_markup=get_inline_keyboard(
-            ('Главное меню', 'menu'),
-            ('О боте', 'about_bot'),
-            placeholder='Что вы хотели?',
-            sizes=(1, 1)
-        )
-    )
-    if delete_original:
-        await message.delete()
+MENU_KEYBOARD = get_inline_keyboard(
+    ('Аккаунт', 'accounts'),
+    ('Биржи', 'exchanges'),
+    ('Кошельки', 'wallets'),
+    ('Помощь', 'help'),
+    ('Назад', 'back'),
+    ('Отмена', 'cancel'),
+    placeholder='Что вы хотели?',
+    sizes=(1, 2, 1, 2)
+)
 
+ACCOUNT_KEYBOARD = get_inline_keyboard(
+    ('Мои биржи', 'accounts'),
+    ('Мои кошельки', 'accounts'),
+    ('Назад', 'back'),
+    ('Отмена', 'cancel'),
+    placeholder='Информация об аккаунте',
+    sizes=(2, 2)
+)
 
-async def send_menu_keyboard(message: types.Message,
-                             delete_original: bool = False):
-    await message.answer(
-        'Выбери действие:',
-        reply_markup=get_inline_keyboard(
-            ('Биржи', 'exchanges'),
-            ('Кошельки', 'wallets'),
-            ('Помощь', 'help'),
-            ('Назад', 'back_menu'),
-            ('Отмена', 'back_menu'),
-            placeholder='Что вы хотели?',
-            sizes=(2, 1, 2)
-        ))
-    if delete_original:
-        await message.delete()
+WALLET_KEYBOARD = get_inline_keyboard(
+    ('Мои биржи', 'accounts'),
+    ('Мои кошельки', 'accounts'),
+    ('Назад', 'back'),
+    ('Отмена', 'cancel'),
+    placeholder='Информация об аккаунте',
+    sizes=(2, 2)
+)
 
 
 @start_router.message(CommandStart())
-async def start_command(message: types.Message):
-    await send_start_keyboard(message)
+async def start_menu(message: types.Message):
+    await message.answer(
+        f'{TEXT_START.format(name=message.from_user.first_name)} '
+        f'Выбери действие из главного меню:', reply_markup=START_KEYBOARD
+    )
     await message.delete()
 
 
-@start_router.callback_query(F.data == 'back_menu')
+@start_router.callback_query(or_f(F.data == 'start', F.data == 'back_start'))
 async def start_menu_callback(callback: types.CallbackQuery):
-    await send_start_keyboard(callback.message, delete_original=True)
+    await callback.message.answer(
+        'Выберите действие из главного меню:', reply_markup=START_KEYBOARD
+    )
+    await callback.message.delete()
     await callback.answer()
 
 
 @start_router.message(
         or_f(Command('menu'), F.text.lower().contains('меню')))
 async def main_menu(message: types.Message):
-    await send_menu_keyboard(message)
+    await message.answer(
+        'С чем вы хотите работать?', reply_markup=MENU_KEYBOARD
+    )
     await message.delete()
 
 
 @start_router.callback_query(F.data == 'menu')
 async def main_menu_callback(callback: types.CallbackQuery):
-    await send_menu_keyboard(callback.message, delete_original=True)
+    await callback.message.answer(
+        'С чем вы хотите работать?', reply_markup=MENU_KEYBOARD
+    )
+    await callback.message.delete()
     await callback.answer()
-
-
-@start_router.callback_query(F.data == 'about_bot')
-async def about_bot_callback(callback: types.CallbackQuery):
-    await callback.message.edit_text('Это бот для работы с криптовалютами')
-    await callback.answer()
-
-
-@start_router.callback_query(F.data == 'contact_developer')
-async def contact_developer_callback(callback: types.CallbackQuery):
-    await callback.message.edit_text('Связь с разработчиком: @your_username')
-    await callback.answer()
-
-
-# @start_router.message()
-# async def delete_message(message: types.Message):
-#     await message.delete()
