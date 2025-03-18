@@ -1,7 +1,7 @@
 from aiogram import Router, types, F
 from aiogram.filters import Command, CommandStart, or_f
 
-from keyboards import get_inline_keyboard
+from .keyboards import get_inline_keyboard
 
 start_router = Router()
 

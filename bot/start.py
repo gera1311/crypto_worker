@@ -6,7 +6,7 @@ import asyncio
 
 from aiogram import Bot, Dispatcher, types
 from dotenv import load_dotenv, find_dotenv
-from handlers import start_router
+from .handlers import start_router
 from apps.exchanges import exchange_router
 from bot.commands import commands
 
